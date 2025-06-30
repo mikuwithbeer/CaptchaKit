@@ -1,4 +1,4 @@
-public func verify(
+public func verifyCaptcha(
     _ token: String,
     service: CaptchaService,
     secret: String,

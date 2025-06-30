@@ -3,7 +3,7 @@ import Testing
 @testable import CaptchaKit
 
 @Test func cloudflareTurnstile() async throws(CaptchaError) {
-    let result = try await verify(
+    let result = try await verifyCaptcha(
         "pass",
         service: CaptchaService.turnstile,
         secret: "1x0000000000000000000000000000000AA"
@@ -13,7 +13,7 @@ import Testing
 }
 
 @Test func hCaptcha() async throws(CaptchaError) {
-    let result = try await verify(
+    let result = try await verifyCaptcha(
         "10000000-aaaa-bbbb-cccc-000000000001",
         service: CaptchaService.hcaptcha,
         secret: "0x0000000000000000000000000000000000000000"
@@ -23,7 +23,7 @@ import Testing
 }
 
 @Test func reCaptcha() async throws(CaptchaError) {
-    let result = try await verify(
+    let result = try await verifyCaptcha(
         "pass",
         service: CaptchaService.recaptcha,
         secret: "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
@@ -33,7 +33,7 @@ import Testing
 }
 
 @Test func invalidToken() async throws(CaptchaError) {
-    let result = try await verify(
+    let result = try await verifyCaptcha(
         "invalid-token",
         service: CaptchaService.turnstile,
         secret: "invalid secret"
