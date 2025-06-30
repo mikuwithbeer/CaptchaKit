@@ -1,6 +1,9 @@
+import Foundation
+
 public enum CaptchaError: Error {
     case urlEncodingFailed
     case dataConversionFailed
-    case jsonDecodeFailed(Error)
+    case jsonDecodeFailed(DecodingError)
+    case urlError(URLError)
     case unknownError(Error)
 }

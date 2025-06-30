@@ -64,7 +64,9 @@ class CaptchaRequest {
             return response.success
         } catch let error as DecodingError {
             throw CaptchaError.jsonDecodeFailed(error)
-        } catch {
+        } catch let error as URLError {
+            throw CaptchaError.urlError(error)
+        } catch let error {
             throw CaptchaError.unknownError(error)
         }
     }
