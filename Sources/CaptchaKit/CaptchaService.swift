@@ -1,8 +1,15 @@
 import Foundation
 
+/// Supported CAPTCHA verification services.
 public enum CaptchaService {
-    case recaptcha, hcaptcha, turnstile
+    /// Google reCAPTCHA verification service.
+    case recaptcha
+    /// hCaptcha verification service.
+    case hcaptcha
+    /// Cloudflare Turnstile verification service.
+    case turnstile
 
+    /// The verification endpoint URL for the selected service.
     var url: URL {
         switch self {
         case .recaptcha:
