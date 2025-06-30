@@ -1,5 +1,9 @@
 import Foundation
 
+struct CaptchaAPIResponse: Decodable {
+    let success: Bool
+}
+
 struct CaptchaRequestData {
     var secret: String
     var token: String
@@ -46,8 +50,10 @@ class CaptchaRequest {
         self.request = request
     }
 
-    func apply() async throws {
+    func apply() async throws -> Bool {
         let (data, _) = try await URLSession.shared.data(for: self.request!)
-        print(String(data: data, encoding: .utf8) ?? "No response body")
+        let response = try JSONDecoder().decode(CaptchaAPIResponse.self, from: data)
+
+        return response.success
     }
 }

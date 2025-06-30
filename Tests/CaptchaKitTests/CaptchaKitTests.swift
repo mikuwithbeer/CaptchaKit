@@ -9,20 +9,10 @@ import Testing
 }
 
 @Test func cloudflareTurnstile() async throws {
-    let verifier = CaptchaRequest(
-        service:
-            CaptchaService.turnstile,
-        data:
-            CaptchaRequestData(
-                secret: "1x0000000000000000000000000000000AA",
-                token: "always"
-            )
+    print(
+        try await verify(
+            "always", service: CaptchaService.turnstile,
+            secret: "1x0000000000000000000000000000000AA")
     )
 
-    do {
-        try verifier.prepare()
-        try await verifier.apply()
-    } catch {
-        print(error)
-    }
 }
