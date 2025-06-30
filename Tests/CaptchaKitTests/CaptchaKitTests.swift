@@ -1,6 +1,9 @@
 import Testing
+
 @testable import CaptchaKit
 
-@Test func example() async throws {
-    // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+@Test func serviceUrls() async throws {
+    #expect(CaptchaServices.recaptcha.getURL().contains("google"))
+    #expect(CaptchaServices.hcaptcha.getURL().contains("hcaptcha"))
+    #expect(CaptchaServices.turnstile.getURL().contains("cloudflare"))
 }
