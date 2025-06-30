@@ -1,4 +1,4 @@
-public enum CaptchaServices {
+public enum CaptchaService {
     case recaptcha, hcaptcha, turnstile
 
     func getURL() -> String {
