@@ -9,51 +9,63 @@ struct CaptchaRequestData {
     var token: String
     var remoteIP: String?
 
-    func toBody() -> Data {
-        let secretUri = self.secret.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
-        let tokenUri = self.token.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+    func toBody() throws(CaptchaError) -> Data {
+        var components = URLComponents()
 
-        var body = Data()
-        body.append("secret=\(secretUri)&response=\(tokenUri)".data(using: .utf8)!)
+        components.queryItems = [
+            URLQueryItem(name: "secret", value: secret),
+            URLQueryItem(name: "response", value: token),
+        ]
 
-        if let remoteIP = self.remoteIP {
-            let remoteIPUri = remoteIP.addingPercentEncoding(
-                withAllowedCharacters: .urlQueryAllowed)!
-            body.append("&remoteip=\(remoteIPUri)".data(using: .utf8)!)
+        if let remoteIP = remoteIP {
+            components.queryItems?.append(URLQueryItem(name: "remoteip", value: remoteIP))
+        }
+
+        guard let query = components.query else {
+            throw CaptchaError.urlEncodingFailed
+        }
+
+        guard let body = query.data(using: .utf8) else {
+            throw CaptchaError.dataConversionFailed
         }
 
         return body
-
     }
 }
 
 class CaptchaRequest {
-    var service: CaptchaService
-    var data: CaptchaRequestData
-    var request: URLRequest?
+    let service: CaptchaService
+    let data: CaptchaRequestData
 
     init(service: CaptchaService, data: CaptchaRequestData) {
         self.service = service
         self.data = data
     }
 
-    func prepare() throws {
-        let url = URL(string: self.service.getURL())!
-        var request = URLRequest(url: url)
+    func makeRequest() throws(CaptchaError) -> URLRequest {
+        var request = URLRequest(url: service.url)
 
         request.httpMethod = "POST"
-        request.httpBody = self.data.toBody()
+        request.httpBody = try data.toBody()
 
         request.setValue("application/json", forHTTPHeaderField: "Accept")
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
 
-        self.request = request
+        return request
     }
 
-    func apply() async throws -> Bool {
-        let (data, _) = try await URLSession.shared.data(for: self.request!)
-        let response = try JSONDecoder().decode(CaptchaAPIResponse.self, from: data)
+    func applyRequest() async throws(CaptchaError) -> Bool {
+        let request = try makeRequest()
 
-        return response.success
+        do {
+            let (data, _) = try await URLSession.shared.data(for: request)
+            let response = try JSONDecoder().decode(CaptchaAPIResponse.self, from: data)
+
+            return response.success
+        } catch let error as DecodingError {
+            throw CaptchaError.jsonDecodeFailed(error)
+        } catch {
+            throw CaptchaError.unknownError(error)
+        }
     }
 }

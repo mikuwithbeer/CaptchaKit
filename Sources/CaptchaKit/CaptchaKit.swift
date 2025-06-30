@@ -3,8 +3,8 @@ public func verify(
     service: CaptchaService,
     secret: String,
     remoteIP: String? = nil
-) async throws -> Bool {
-    let verifier = CaptchaRequest(
+) async throws(CaptchaError) -> Bool {
+    let request = CaptchaRequest(
         service: service,
         data:
             CaptchaRequestData(
@@ -14,6 +14,5 @@ public func verify(
             )
     )
 
-    try verifier.prepare()
-    return try await verifier.apply()
+    return try await request.applyRequest()
 }

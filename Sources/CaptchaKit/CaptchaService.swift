@@ -1,14 +1,16 @@
+import Foundation
+
 public enum CaptchaService {
     case recaptcha, hcaptcha, turnstile
 
-    func getURL() -> String {
+    var url: URL {
         switch self {
         case .recaptcha:
-            return "https://www.google.com/recaptcha/api/siteverify"
+            return URL(string: "https://www.google.com/recaptcha/api/siteverify")!
         case .hcaptcha:
-            return "https://api.hcaptcha.com/siteverify"
+            return URL(string: "https://api.hcaptcha.com/siteverify")!
         case .turnstile:
-            return "https://challenges.cloudflare.com/turnstile/v0/siteverify"
+            return URL(string: "https://challenges.cloudflare.com/turnstile/v0/siteverify")!
         }
     }
 }
