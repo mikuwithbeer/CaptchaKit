@@ -10,7 +10,7 @@
 ///   - remoteIP: The user's IP address.
 ///
 /// - Throws: ``CaptchaError`` if the verification request fails.
-/// - Returns: ``true`` if the CAPTCHA token is valid; otherwise, ``false``.
+/// - Returns: `true` if the CAPTCHA token is valid; otherwise, `false`.
 public func verifyCaptcha(
     _ token: String,
     service: CaptchaService,

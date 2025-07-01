@@ -78,7 +78,7 @@ final class CaptchaRequest {
     /// Sends the CAPTCHA verification request and returns the result.
     ///
     /// - Throws: ``CaptchaError`` if the request fails or the response cannot be decoded.
-    /// - Returns: ``true`` if the CAPTCHA token is valid; otherwise, ``false``.
+    /// - Returns: `true` if the CAPTCHA token is valid; otherwise, `false`.
     func applyRequest() async throws(CaptchaError) -> Bool {
         let request = try makeRequest()
 

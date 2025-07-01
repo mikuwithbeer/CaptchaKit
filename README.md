@@ -1,17 +1,19 @@
 # CaptchaKit
 
-Lightweight and asynchronous Swift package for server-side verification of various captcha tokens.
+Lightweight and asynchronous Swift package for server-side verification of various CAPTCHA tokens.
 
 ## Services
+
 - Google reCAPTCHA
 - hCaptcha
 - Cloudflare Turnstile
 
 ## Installation
+
 Add `CaptchaKit` to your project's dependencies in `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/mikuwithbeer/CaptchaKit.git", from: "0.0.0")
+.package(url: "https://github.com/mikuwithbeer/CaptchaKit.git", from: "1.0.0")
 ```
 
 ## Usage
@@ -31,3 +33,7 @@ if isValid {
     // Token is invalid
 }
 ```
+
+## License
+
+CaptchaKit is distributed under the MIT License.
