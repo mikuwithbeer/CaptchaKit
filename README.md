@@ -13,7 +13,7 @@ Lightweight and asynchronous Swift package for server-side verification of vario
 Add `CaptchaKit` to your project's dependencies in `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/mikuwithbeer/CaptchaKit.git", from: "1.0.0")
+.package(url: "https://github.com/mikuwithbeer/CaptchaKit.git", from: "1.1.0")
 ```
 
 ## Usage
