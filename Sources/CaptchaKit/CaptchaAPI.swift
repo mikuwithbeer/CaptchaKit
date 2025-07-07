@@ -1,5 +1,9 @@
 import Foundation
 
+#if canImport(FoundationNetworking)
+    import FoundationNetworking
+#endif
+
 /// The response structure returned by CAPTCHA verification services.
 struct CaptchaResponseData: Decodable {
     let success: Bool
