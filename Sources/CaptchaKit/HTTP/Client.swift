@@ -4,12 +4,16 @@ import Foundation
     import FoundationNetworking
 #endif
 
-class CaptchaClient {
+final class CaptchaClient {
     let service: CaptchaService
-    let secret: String
+
+    private let session: URLSession
+    private let secret: String
 
     init(service: CaptchaService, secret: String) {
         self.service = service
+
+        self.session = URLSession(configuration: .ephemeral)
         self.secret = secret
     }
 
@@ -32,7 +36,7 @@ class CaptchaClient {
 
     private func applyRequest(request: URLRequest) async throws(CaptchaError) -> CaptchaResponse {
         do {
-            let (data, _) = try await URLSession.shared.data(for: request)
+            let (data, _) = try await session.data(for: request)
 
             let decoder = JSONDecoder()
             decoder.dateDecodingStrategy = .iso8601
