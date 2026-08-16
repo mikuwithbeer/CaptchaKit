@@ -26,7 +26,7 @@ final class CaptchaClient {
         var urlRequest = URLRequest(url: service.url)
 
         urlRequest.httpMethod = "POST"
-        urlRequest.httpBody = try request.encode(secret: secret)
+        urlRequest.httpBody = try request.encode(with: secret)
 
         urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
         urlRequest.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
@@ -39,7 +39,7 @@ final class CaptchaClient {
             let (data, _) = try await session.data(for: request)
 
             let decoder = JSONDecoder()
-            decoder.dateDecodingStrategy = .iso8601
+            decoder.dateDecodingStrategy = .custom(CaptchaResponse.dateDecoder)
 
             return try decoder.decode(CaptchaResponse.self, from: data)
         } catch let error as DecodingError {

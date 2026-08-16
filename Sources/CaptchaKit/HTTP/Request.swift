@@ -4,7 +4,7 @@ public struct CaptchaRequest {
     let token: String
     let ip: String?
 
-    public func encode(secret: String) throws(CaptchaError) -> Data {
+    func encode(with secret: String) throws(CaptchaError) -> Data {
         var components = URLComponents()
         var items = [
             URLQueryItem(name: "secret", value: secret),
