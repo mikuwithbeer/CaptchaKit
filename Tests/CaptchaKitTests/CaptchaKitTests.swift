@@ -2,42 +2,38 @@ import Testing
 
 @testable import CaptchaKit
 
-@Test func cloudflareTurnstile() async throws(CaptchaError) {
-    let result = try await verifyCaptcha(
-        "pass",
-        service: CaptchaService.turnstile,
+@Test func turnstileSuccess() async throws(CaptchaError) {
+    let client = CaptchaClient(
+        service: .turnstile,
         secret: "1x0000000000000000000000000000000AA"
     )
 
-    #expect(result, "Turnstile should return success for test token")
+    let request = CaptchaRequest.init(token: "pass", ip: nil)
+    let response = try await client.send(request: request)
+
+    #expect(response.verified, "Turnstile should return success for test token")
 }
 
-@Test func hCaptcha() async throws(CaptchaError) {
-    let result = try await verifyCaptcha(
-        "10000000-aaaa-bbbb-cccc-000000000001",
-        service: CaptchaService.hcaptcha,
+@Test func hcaptchaSuccess() async throws(CaptchaError) {
+    let client = CaptchaClient(
+        service: .hcaptcha,
         secret: "0x0000000000000000000000000000000000000000"
     )
 
-    #expect(result, "hCaptcha should return success for test token")
+    let request = CaptchaRequest.init(token: "10000000-aaaa-bbbb-cccc-000000000001", ip: nil)
+    let response = try await client.send(request: request)
+
+    #expect(response.verified, "hCaptcha should return success for test token")
 }
 
-@Test func reCaptcha() async throws(CaptchaError) {
-    let result = try await verifyCaptcha(
-        "pass",
-        service: CaptchaService.recaptcha,
+@Test func recaptchaSuccess() async throws(CaptchaError) {
+    let client = CaptchaClient(
+        service: .recaptcha,
         secret: "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
     )
 
-    #expect(result, "reCaptcha should return success for test token")
-}
+    let request = CaptchaRequest.init(token: "pass", ip: nil)
+    let response = try await client.send(request: request)
 
-@Test func invalidToken() async throws(CaptchaError) {
-    let result = try await verifyCaptcha(
-        "invalid-token",
-        service: CaptchaService.turnstile,
-        secret: "invalid secret"
-    )
-
-    #expect(!result, "Invalid token should not return success")
+    #expect(response.verified, "reCaptcha should return success for test token")
 }

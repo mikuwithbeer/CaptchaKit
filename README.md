@@ -36,4 +36,4 @@ if isValid {
 
 ## License
 
-CaptchaKit is distributed under the MIT License.
+CaptchaKit is distributed under the BSD-2-Clause Plus Patent License.
