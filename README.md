@@ -4,36 +4,58 @@ Lightweight and asynchronous Swift package for server-side verification of vario
 
 ## Services
 
-- Google reCAPTCHA
-- hCaptcha
-- Cloudflare Turnstile
+- `Google reCAPTCHA`[^1]
+- `hCaptcha`[^2]
+- `Cloudflare Turnstile`[^3]
 
 ## Installation
 
 Add `CaptchaKit` to your project's dependencies in `Package.swift`:
 
 ```swift
-.package(url: "https://github.com/mikuwithbeer/CaptchaKit.git", from: "1.1.0")
+.package(url: "https://github.com/mikuwithbeer/CaptchaKit.git", from: "2.0.0")
 ```
 
 ## Usage
 
-```swift
-import CaptchaKit
+1. Create a reusable client instance:
 
-let isValid = try await verifyCaptcha(
-    "user-token",
-    service: .turnstile,
-    secret: "your-secret-key"
-)
+   ```swift
+   import CaptchaKit
 
-if isValid {
-    // Token is valid
-} else {
-    // Token is invalid
-}
-```
+   let client = CaptchaKit.Client(
+     CaptchaKit.Config(
+       strategy: .turnstile,
+       secret: "your-secret-key"
+     )
+   )
+   ```
 
-## License
+2. Verify token with existing client:
 
-CaptchaKit is distributed under the BSD-2-Clause Plus Patent License.
+   ```swift
+   let isValid = await client.isValid("user-token")
+   if !isValid {
+       // Unauthorized!
+   }
+   ```
+
+   Alternatively, you can verify with metadata:
+
+   ```swift
+   if let verification = try? await client.verifyDetails("user-token", ip: "100.200.255.1") {
+       print("Verified for \(verification.host) at \(verification.date)")
+   }
+   ```
+
+## Appendix
+
+This project is licensed under the **BSD-2-Clause Plus Patent License**[^4].
+
+[^1]: <https://developers.google.com/recaptcha>
+
+[^2]: <https://www.hcaptcha.com>
+
+[^3]: <https://www.cloudflare.com/products/turnstile/>
+
+[^4]: <https://spdx.org/licenses/BSD-2-Clause-Patent.html>
