@@ -52,7 +52,10 @@ struct CaptchaKitTests {
     func hcaptchaRejectsInvalidTestToken()
         async throws(CaptchaKit.Error)
     {
-        let success = await hcaptchaClient.verifyAsBool("10000000-dddd-bbbb-cccc-100000000001")
+        let success = await hcaptchaClient.verifyWithoutError(
+            "10000000-dddd-bbbb-cccc-100000000001"
+        )
+
         #expect(!success)
     }
 

@@ -4,8 +4,9 @@ public enum CaptchaKit {
     public enum Error: Swift.Error {
         case requestEncodingFailed
         case responseDecodingFailed(DecodingError)
+        case responseFailure
         case networkFailure(any Swift.Error)
-        case captchaFailure([String])
+        case strategyFailure([String])
         case unexpected(any Swift.Error)
     }
 
@@ -26,7 +27,7 @@ public enum CaptchaKit {
         }
     }
 
-    public struct Config: Equatable {
+    public struct Config: Sendable, Equatable {
         public let strategy: Strategy
         public let secret: String
 
@@ -36,7 +37,7 @@ public enum CaptchaKit {
         }
     }
 
-    public struct Metadata: Equatable {
+    public struct Metadata: Sendable, Equatable {
         public let host: String
         public let date: Date
     }
@@ -55,13 +56,17 @@ public enum CaptchaKit {
             let response = try await httpClient.send(request)
 
             if response.verified {
-                return Metadata(host: response.host!, date: response.timestamp!)
+                guard let host = response.host, let date = response.timestamp else {
+                    throw .responseFailure
+                }
+
+                return Metadata(host: host, date: date)
             } else {
                 return nil
             }
         }
 
-        public func verifyAsBool(_ token: String, ip: String? = nil)
+        public func verifyWithoutError(_ token: String, ip: String? = nil)
             async -> Bool
         {
             do {

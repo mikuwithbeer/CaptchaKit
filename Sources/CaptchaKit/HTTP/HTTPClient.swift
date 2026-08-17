@@ -53,7 +53,7 @@ final class HTTPClient: Sendable {
 
         if let errorValues = response.errors {
             if !errorValues.isEmpty {
-                throw .captchaFailure(errorValues)
+                throw .strategyFailure(errorValues)
             }
         }
 
