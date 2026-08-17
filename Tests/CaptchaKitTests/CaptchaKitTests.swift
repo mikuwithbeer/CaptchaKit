@@ -1,7 +1,7 @@
 import CaptchaKit
 import Testing
 
-@Suite("CaptchaKit Client")
+@Suite("CaptchaKit Public API")
 struct CaptchaKitTests {
     private let recaptchaClient = CaptchaKit.Client(
         CaptchaKit.Config(
@@ -28,24 +28,24 @@ struct CaptchaKitTests {
     func recaptchaAcceptsValidTestToken()
         async throws(CaptchaKit.Error)
     {
-        let metadata = try await recaptchaClient.verifyWithMetadata(
+        let info = try await recaptchaClient.verifyWithInfo(
             "valid-token-1",
             ip: nil
         )
 
-        #expect(metadata != nil)
+        #expect(info != nil)
     }
 
     @Test("hCaptcha accepts valid test token")
     func hcaptchaAcceptsValidTestToken()
         async throws(CaptchaKit.Error)
     {
-        let metadata = try await hcaptchaClient.verifyWithMetadata(
+        let info = try await hcaptchaClient.verifyWithInfo(
             "10000000-aaaa-bbbb-cccc-000000000001",
             ip: nil
         )
 
-        #expect(metadata != nil)
+        #expect(info != nil)
     }
 
     @Test("hCaptcha rejects invalid test token")
@@ -63,11 +63,11 @@ struct CaptchaKitTests {
     func turnstileAcceptsValidTestToken()
         async throws(CaptchaKit.Error)
     {
-        let metadata = try await turnstileClient.verifyWithMetadata(
+        let info = try await turnstileClient.verifyWithInfo(
             "valid-token-2",
             ip: nil
         )
 
-        #expect(metadata != nil)
+        #expect(info != nil)
     }
 }
