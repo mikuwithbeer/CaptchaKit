@@ -1,6 +1,8 @@
 import Foundation
 
 extension CaptchaKit {
+    /// Pick the provider your application is configured to use.
+    /// The selected strategy determines which provider receives the verification request.
     public enum Strategy: Sendable, Equatable {
         case recaptcha
         case hcaptcha

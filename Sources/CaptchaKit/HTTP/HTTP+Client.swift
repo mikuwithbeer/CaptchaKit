@@ -5,6 +5,7 @@ import Foundation
 #endif
 
 extension HTTP {
+    /// The internal HTTP client responsible for communicating with providers.
     final class Client: Sendable {
         let strategy: CaptchaKit.Strategy
 
@@ -14,6 +15,7 @@ extension HTTP {
         init(strategy: CaptchaKit.Strategy, secret: String) {
             self.strategy = strategy
 
+            // Prevents cached or cookie state from affecting verification.
             self.session = URLSession(configuration: .ephemeral)
             self.secret = secret
         }
@@ -33,9 +35,15 @@ extension HTTP {
             urlRequest.httpMethod = "POST"
             urlRequest.httpBody = try request.encode(with: secret)
 
-            urlRequest.setValue("application/json", forHTTPHeaderField: "Accept")
             urlRequest.setValue(
-                "application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")
+                "application/json",
+                forHTTPHeaderField: "Accept"
+            )
+
+            urlRequest.setValue(
+                "application/x-www-form-urlencoded",
+                forHTTPHeaderField: "Content-Type"
+            )
 
             return urlRequest
         }
@@ -53,10 +61,9 @@ extension HTTP {
 
             let response = try Response.decode(from: data)
 
-            if let errorValues = response.errors {
-                if !errorValues.isEmpty {
-                    throw .strategyFailure(errorValues)
-                }
+            // Providers also report validation failures inside a valid response.
+            if let errorValues = response.errors, !errorValues.isEmpty {
+                throw .strategyFailure(errorValues)
             }
 
             return response

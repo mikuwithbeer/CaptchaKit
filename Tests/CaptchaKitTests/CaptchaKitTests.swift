@@ -28,46 +28,45 @@ struct CaptchaKitTests {
     func recaptchaAcceptsValidTestToken()
         async throws(CaptchaKit.Error)
     {
-        let info = try await recaptchaClient.verifyWithInfo(
+        let verification = try await recaptchaClient.verifyDetails(
             "valid-token-1",
             ip: nil
         )
 
-        #expect(info != nil)
+        #expect(verification != nil)
     }
 
     @Test("hCaptcha accepts valid test token")
     func hcaptchaAcceptsValidTestToken()
         async throws(CaptchaKit.Error)
     {
-        let info = try await hcaptchaClient.verifyWithInfo(
+        let verification = try await hcaptchaClient.verifyDetails(
             "10000000-aaaa-bbbb-cccc-000000000001",
             ip: nil
         )
 
-        #expect(info != nil)
+        #expect(verification != nil)
     }
 
     @Test("hCaptcha rejects invalid test token")
     func hcaptchaRejectsInvalidTestToken()
         async throws(CaptchaKit.Error)
     {
-        let success = await hcaptchaClient.verifyWithoutError(
+        let isValid = await hcaptchaClient.isValid(
             "10000000-dddd-bbbb-cccc-100000000001"
         )
 
-        #expect(!success)
+        #expect(!isValid)
     }
 
     @Test("Cloudflare Turnstile accepts valid test token")
     func turnstileAcceptsValidTestToken()
         async throws(CaptchaKit.Error)
     {
-        let info = try await turnstileClient.verifyWithInfo(
-            "valid-token-2",
-            ip: nil
+        let isValid = await turnstileClient.isValid(
+            "valid-token-2"
         )
 
-        #expect(info != nil)
+        #expect(isValid)
     }
 }

@@ -1,6 +1,7 @@
 import Foundation
 
 extension HTTP {
+    /// The normalized verification response returned by a provider.
     struct Response: Decodable {
         let verified: Bool
         let host: String?
@@ -18,6 +19,8 @@ extension HTTP {
             throws(CaptchaKit.Error) -> Self
         {
             let decoder = JSONDecoder()
+
+            // Parsing the known provider formats ourselves keeps verification behavior consistent across supported toolchains.
             decoder.dateDecodingStrategy = .custom { decoder in
                 let container = try decoder.singleValueContainer()
                 let value = try container.decode(String.self)
@@ -33,6 +36,7 @@ extension HTTP {
                     }
                 }
 
+                // Throw a decoding error here for other cases.
                 throw DecodingError.dataCorruptedError(
                     in: container,
                     debugDescription: "Malformed ISO 8601 Format: \(value)"
@@ -44,6 +48,8 @@ extension HTTP {
             } catch let error as DecodingError {
                 throw .responseDecodingFailed(error)
             } catch {
+                // Anything outside normal decoding failures is unexpected here.
+                // Retain the underlying error rather than losing its context.
                 throw .unexpected(error)
             }
         }

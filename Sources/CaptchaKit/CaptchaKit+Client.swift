@@ -1,4 +1,5 @@
 extension CaptchaKit {
+    /// A high-level client for validating tokens with the configured provider.
     public final class Client: Sendable {
         private let httpClient: HTTP.Client
 
@@ -6,7 +7,10 @@ extension CaptchaKit {
             httpClient = HTTP.Client(strategy: config.strategy, secret: config.secret)
         }
 
-        public func verifyWithInfo(_ token: String, ip: String? = nil)
+        /// Verifies a token and returns information about the challenge.
+        ///
+        /// - Throws: An ``Error`` when verification fails, including invalid tokens, request failures, and malformed provider responses.
+        public func verifyDetails(_ token: String, ip: String? = nil)
             async throws(Error) -> Info?
         {
             let request = HTTP.Request(token: token, ip: ip)
@@ -23,11 +27,17 @@ extension CaptchaKit {
             }
         }
 
-        public func verifyWithoutError(_ token: String, ip: String? = nil)
+        /// Verifies a token without propagating verification errors.
+        ///
+        /// This is a convenient option when you only care whether a token is valid.
+        /// Any error encountered during verification is treated as a failed verification.
+        ///
+        /// - Returns: `true` if the token was successfully verified, `false` otherwise.
+        public func isValid(_ token: String, ip: String? = nil)
             async -> Bool
         {
             do {
-                guard try await verifyWithInfo(token, ip: ip) != nil else {
+                guard try await verifyDetails(token, ip: ip) != nil else {
                     return false
                 }
             } catch {

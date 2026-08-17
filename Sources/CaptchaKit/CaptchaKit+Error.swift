@@ -1,4 +1,5 @@
 extension CaptchaKit {
+    /// Errors that can occur while verifying a challenge.
     public enum Error: Swift.Error {
         case requestEncodingFailed
         case responseDecodingFailed(DecodingError)
