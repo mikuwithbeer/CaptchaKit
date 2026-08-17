@@ -3,5 +3,6 @@ import Foundation
 public enum CaptchaError: Error {
     case requestEncodingFailed
     case responseDecodingFailed(DecodingError)
-    case networkRequestFailed(Error)
+    case networkFailure(any Error)
+    case unexpected(any Error)
 }

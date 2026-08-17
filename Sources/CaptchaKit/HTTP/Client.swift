@@ -4,26 +4,30 @@ import Foundation
     import FoundationNetworking
 #endif
 
-final class CaptchaClient {
-    let service: CaptchaService
+public final class CaptchaClient {
+    public let service: CaptchaService
 
     private let session: URLSession
     private let secret: String
 
-    init(service: CaptchaService, secret: String) {
+    public init(service: CaptchaService, secret: String) {
         self.service = service
 
         self.session = URLSession(configuration: .ephemeral)
         self.secret = secret
     }
 
-    public func send(request: CaptchaRequest) async throws(CaptchaError) -> CaptchaResponse {
-        let urlRequest = try buildRequest(request: request)
-        return try await applyRequest(request: urlRequest)
+    public func send(_ request: CaptchaRequest)
+        async throws(CaptchaError) -> CaptchaResponse
+    {
+        let urlRequest = try buildRequest(request)
+        return try await performRequest(urlRequest)
     }
 
-    private func buildRequest(request: CaptchaRequest) throws(CaptchaError) -> URLRequest {
-        var urlRequest = URLRequest(url: service.url)
+    private func buildRequest(_ request: CaptchaRequest)
+        throws(CaptchaError) -> URLRequest
+    {
+        var urlRequest = URLRequest(url: service.verificationURL)
 
         urlRequest.httpMethod = "POST"
         urlRequest.httpBody = try request.encode(with: secret)
@@ -34,18 +38,18 @@ final class CaptchaClient {
         return urlRequest
     }
 
-    private func applyRequest(request: URLRequest) async throws(CaptchaError) -> CaptchaResponse {
+    private func performRequest(_ urlRequest: URLRequest)
+        async throws(CaptchaError) -> CaptchaResponse
+    {
+        let data: Data
+
         do {
-            let (data, _) = try await session.data(for: request)
-
-            let decoder = JSONDecoder()
-            decoder.dateDecodingStrategy = .custom(CaptchaResponse.dateDecoder)
-
-            return try decoder.decode(CaptchaResponse.self, from: data)
-        } catch let error as DecodingError {
-            throw .responseDecodingFailed(error)
+            let (responseData, _) = try await session.data(for: urlRequest)
+            data = responseData
         } catch {
-            throw .networkRequestFailed(error)
+            throw .networkFailure(error)
         }
+
+        return try CaptchaResponse.load(from: data)
     }
 }
