@@ -12,21 +12,35 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        swift: ["6.0", "6.2"]
+        include:
+          - os: ubuntu-latest
+            swift: "6.0.1"
+          - os: macos-15
+            xcode: "16.2"
+            swift: "6.0.1"
+          - os: macos-26
+            xcode: "26.6"
+            swift: "6.3.3"
 
     runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v7
 
-      - name: Setup Swift
+      - name: Setup Swift (macOS)
+        if: runner.os == "macOS"
+        run: |
+          sudo xcode-select -s "/Applications/Xcode_${{ matrix.xcode }}.app/Contents/Developer"
+          swift --version
+
+      - name: Setup Swift (Linux)
+        if: runner.os == "Linux"
         uses: swift-actions/setup-swift@v2
         with:
           swift-version: ${{ matrix.swift }}
 
       - name: Build Project
-        run: swift build
+        run: swift build -v
 
       - name: Test Project
-        run: swift test
+        run: swift test -v
