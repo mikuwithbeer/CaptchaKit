@@ -1,6 +1,6 @@
 import Foundation
 
-public struct CaptchaRequest {
+public struct CaptchaHTTPRequest {
     public let token: String
     public let ip: String?
 

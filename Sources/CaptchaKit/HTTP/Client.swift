@@ -4,27 +4,27 @@ import Foundation
     import FoundationNetworking
 #endif
 
-public final class CaptchaClient {
-    public let service: CaptchaService
+public final class CaptchaHTTPClient {
+    public let service: CaptchaHTTPService
 
     private let session: URLSession
     private let secret: String
 
-    public init(service: CaptchaService, secret: String) {
+    public init(service: CaptchaHTTPService, secret: String) {
         self.service = service
 
         self.session = URLSession(configuration: .ephemeral)
         self.secret = secret
     }
 
-    public func send(_ request: CaptchaRequest)
-        async throws(CaptchaError) -> CaptchaResponse
+    public func send(_ request: CaptchaHTTPRequest)
+        async throws(CaptchaError) -> CaptchaHTTPResponse
     {
         let urlRequest = try buildRequest(request)
         return try await performRequest(urlRequest)
     }
 
-    private func buildRequest(_ request: CaptchaRequest)
+    private func buildRequest(_ request: CaptchaHTTPRequest)
         throws(CaptchaError) -> URLRequest
     {
         var urlRequest = URLRequest(url: service.verificationURL)
@@ -39,7 +39,7 @@ public final class CaptchaClient {
     }
 
     private func performRequest(_ urlRequest: URLRequest)
-        async throws(CaptchaError) -> CaptchaResponse
+        async throws(CaptchaError) -> CaptchaHTTPResponse
     {
         let data: Data
 
@@ -50,6 +50,6 @@ public final class CaptchaClient {
             throw .networkFailure(error)
         }
 
-        return try CaptchaResponse.load(from: data)
+        return try CaptchaHTTPResponse.load(from: data)
     }
 }

@@ -1,6 +1,6 @@
 import Foundation
 
-public enum CaptchaService {
+public enum CaptchaHTTPService {
     case recaptcha
     case hcaptcha
     case turnstile

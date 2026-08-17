@@ -1,6 +1,6 @@
 import Foundation
 
-public struct CaptchaResponse: Decodable {
+public struct CaptchaHTTPResponse: Decodable {
     public let verified: Bool
 
     let host: String?
@@ -41,7 +41,7 @@ public struct CaptchaResponse: Decodable {
         }
 
         do {
-            return try decoder.decode(CaptchaResponse.self, from: data)
+            return try decoder.decode(Self.self, from: data)
         } catch let error as DecodingError {
             throw .responseDecodingFailed(error)
         } catch {
