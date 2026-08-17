@@ -1,22 +1,20 @@
 import Foundation
 
-public struct CaptchaHTTPResponse: Decodable {
-    public let verified: Bool
-
+struct HTTPResponse: Decodable {
+    let verified: Bool
     let host: String?
     let timestamp: Date?
     let errors: [String]?
 
     enum CodingKeys: String, CodingKey {
         case verified = "success"
-
         case host = "hostname"
         case timestamp = "challenge_ts"
         case errors = "error-codes"
     }
 
-    static public func load(from data: Data)
-        throws(CaptchaError) -> Self
+    static func decode(from data: Data)
+        throws(CaptchaKit.Error) -> Self
     {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .custom { decoder in

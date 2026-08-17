@@ -1,16 +1,16 @@
 import Foundation
 
-public struct CaptchaHTTPRequest {
-    public let token: String
-    public let ip: String?
+struct HTTPRequest {
+    let token: String
+    let ip: String?
 
-    public init(token: String, ip: String? = nil) {
+    init(token: String, ip: String?) {
         self.token = token
         self.ip = ip
     }
 
-    public func encode(with secret: String)
-        throws(CaptchaError) -> Data
+    func encode(with secret: String)
+        throws(CaptchaKit.Error) -> Data
     {
         var components = URLComponents()
         var items = [

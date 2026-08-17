@@ -1,61 +1,70 @@
+import CaptchaKit
 import Testing
 
-@testable import CaptchaKit
-
-@Suite("Captcha HTTP Client")
-struct CaptchaHTTPClientTests {
-    private let recaptchaClient = CaptchaHTTPClient(
-        service: .recaptcha,
-        secret: "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
+@Suite("CaptchaKit Client")
+struct CaptchaKitTests {
+    private let recaptchaClient = CaptchaKit.Client(
+        CaptchaKit.Config(
+            strategy: .recaptcha,
+            secret: "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
+        )
     )
 
-    private let hcaptchaClient = CaptchaHTTPClient(
-        service: .hcaptcha,
-        secret: "0x0000000000000000000000000000000000000000"
+    private let hcaptchaClient = CaptchaKit.Client(
+        CaptchaKit.Config(
+            strategy: .hcaptcha,
+            secret: "0x0000000000000000000000000000000000000000"
+        )
     )
 
-    private let turnstileClient = CaptchaHTTPClient(
-        service: .turnstile,
-        secret: "1x0000000000000000000000000000000AA"
+    private let turnstileClient = CaptchaKit.Client(
+        CaptchaKit.Config(
+            strategy: .turnstile,
+            secret: "1x0000000000000000000000000000000AA"
+        )
     )
 
     @Test("Google reCAPTCHA accepts valid test token")
     func recaptchaAcceptsValidTestToken()
-        async throws(CaptchaError)
+        async throws(CaptchaKit.Error)
     {
-        let request = CaptchaHTTPRequest(token: "valid-token-1")
-        let response = try await recaptchaClient.send(request)
+        let metadata = try await recaptchaClient.verifyWithMetadata(
+            "valid-token-1",
+            ip: nil
+        )
 
-        #expect(response.verified)
+        #expect(metadata != nil)
     }
 
     @Test("hCaptcha accepts valid test token")
     func hcaptchaAcceptsValidTestToken()
-        async throws(CaptchaError)
+        async throws(CaptchaKit.Error)
     {
-        let request = CaptchaHTTPRequest(token: "10000000-aaaa-bbbb-cccc-000000000001")
-        let response = try await hcaptchaClient.send(request)
+        let metadata = try await hcaptchaClient.verifyWithMetadata(
+            "10000000-aaaa-bbbb-cccc-000000000001",
+            ip: nil
+        )
 
-        #expect(response.verified)
+        #expect(metadata != nil)
     }
 
     @Test("hCaptcha rejects invalid test token")
     func hcaptchaRejectsInvalidTestToken()
-        async throws(CaptchaError)
+        async throws(CaptchaKit.Error)
     {
-        let request = CaptchaHTTPRequest(token: "10000000-bbbb-aaaa-cccc-000000000002")
-        let response = try await hcaptchaClient.send(request)
-
-        #expect(!response.verified)
+        let success = await hcaptchaClient.verifyAsBool("10000000-dddd-bbbb-cccc-100000000001")
+        #expect(!success)
     }
 
     @Test("Cloudflare Turnstile accepts valid test token")
     func turnstileAcceptsValidTestToken()
-        async throws(CaptchaError)
+        async throws(CaptchaKit.Error)
     {
-        let request = CaptchaHTTPRequest(token: "valid-token-2")
-        let response = try await turnstileClient.send(request)
+        let metadata = try await turnstileClient.verifyWithMetadata(
+            "valid-token-2",
+            ip: nil
+        )
 
-        #expect(response.verified)
+        #expect(metadata != nil)
     }
 }
